@@ -33,6 +33,7 @@ include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_wgcn
 //   This is an example of how to use getGenomeAttribute() to fetch parameters
 //   from igenomes.config using `--genome`
 params.fasta = getGenomeAttribute('fasta')
+params.salmon_folder = getGenomeAttribute('salmon_folder')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
