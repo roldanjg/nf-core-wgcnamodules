@@ -10,24 +10,19 @@
             "sample": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
-                "meta": ["id"]
+                "errorMessage": "Sample name must be provided and cannot contain spaces.The name must be the same specified in the sample column for nf-core/rnaseq samplesheet."
             },
-            "fastq_1": {
+            "condition": {
                 "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+$",
+                "errorMessage": "The name or identifier that caracterice a group of replicates. It must be provided and cannot contain spaces."
             },
-            "fastq_2": {
-                "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            "replicate": {
+                "type": "integer",
+                "pattern": "^\\d+$",
+                "errorMessage": "The replitace number is an integer number, cannot contain dots or commas."
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["sample", "condition", "replicate"]
     }
 }

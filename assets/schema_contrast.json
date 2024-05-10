@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/wgcnamodules/master/assets/schema_contrast.json",
+    "title": "nf-core/wgcnamodules pipeline - params.contrast schema",
+    "description": "Schema for the file provided with params.contrast",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "contrast":{
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "The identifier that caracterice the contrast. It must be provided and cannot contain spaces."
+            },
+            "variable": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "The identifier for the condition used as reference to get the differentially expressed genes. It must be provided and cannot contain spaces."
+            },
+            "reference": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "The identifier for the condition used as reference to get the differentially expressed genes. It must be provided and cannot contain spaces."
+            },
+            "target": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "The identifier for the condition where differentially expressed genes are to be measured. It must be provided and cannot contain spaces."
+            }
+        },
+        "required": ["contrast","variable", "reference", "target"]
+    }
+}

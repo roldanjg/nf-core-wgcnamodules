@@ -1,0 +1,3 @@
+contrast_id,reference_condition,target_condition
+CONTROL1_vs_TREATMENT1,CONTROL1,TREATMENT1
+CONTROL1_vs_TREATMENT2,CONTROL1,TREATMENT2

@@ -1,0 +1,3 @@
+contrast,variable,reference,target
+TREATMENT1_vs_CONTROL1,condition,CONTROL1,TREATMENT1
+TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2

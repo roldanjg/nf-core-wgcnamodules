@@ -19,7 +19,7 @@
 
 ## Introduction
 
-**nf-core/wgcnamodules** is a bioinformatics pipeline that ...
+**nf-core/wgcnamodules** is a bioinformatics pipeline that is under development and testing. Do not atempt to use it.
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
