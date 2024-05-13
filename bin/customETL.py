@@ -2,6 +2,7 @@
 
 # Written by Joaquin Grau Roldán . Released under the MIT license.
 import argparse
+from math import log2
 import pandas as pd
 import sys
 
@@ -181,32 +182,48 @@ def load_data(input_wgcna,contrast_wgcna,tpms_wgcna,genes):
     with open(contrast_wgcna, "r", encoding="utf-8-sig") as fin:
         next(fin)
         for line in fin:
-            line_sp = line.split(',')
+            line_sp = line.strip().split(',')
             metadata_dict['comparations'][line_sp[0]] = {'reference':line_sp[2],'target':line_sp[3]}
     if genes.endswith('.txt'):
-        with open(contrast_wgcna, "r", encoding="utf-8-sig") as fin:
+        with open(genes, "r", encoding="utf-8-sig") as fin:
             for line in fin:
                 metadata_dict['genes'].append(line.strip())
-            
 
     tpms = pd.read_csv(tpms_wgcna, sep='\t').drop(columns='gene_name')
     return metadata_dict, tpms
 
 def calculate_mean(metadata, tpmsdf):
     tpmsdf = tpmsdf.set_index("gene_id")
+    tpms_cols = []
     for metadata_condition in metadata['samples']:
         replicates = metadata['samples'][metadata_condition]
+        tpms_cols.append(metadata_condition)
         tpmsdf[metadata_condition] = tpmsdf[replicates].mean(axis=1)
-        tpmsdf = tpmsdf.drop(columns=replicates)
-    return tpmsdf
+    return tpmsdf[tpms_cols]
+
+def select_specific_genes(metadata, tpmsdf):
+    return tpmsdf[tpmsdf['gene_id'].isin(metadata['genes'])]
 
 def calculate_ratio(metadata, tpmsdf):
-    pass
+    print(metadata['comparations'])
+    ratio_cols = []
+    tpmsdf = tpmsdf.applymap(lambda c: log2(c + 1))
+    for comparation in metadata['comparations']:
+        ratio_cols.append(comparation)
+        target = metadata['comparations'][comparation]['target']
+        reference = metadata['comparations'][comparation]['reference']
+        tpmsdf[comparation] = tpmsdf[target] - tpmsdf[reference]
+
+    return tpmsdf[ratio_cols]
+
 def main(args=None):
     args = parse_args(args)
     # extract
     metadata, tpmsdf = load_data(args.input_wgcna,args.contrast_wgcna,args.tpms_wgcna,args.genes)
     # transform
+    if args.genes.endswith('.txt'):
+        tpmsdf = select_specific_genes(metadata, tpmsdf)
+    
     tpmsdf = calculate_mean(metadata, tpmsdf)
     if args.norm == 'ratio':
         tpmsdf = calculate_ratio(metadata, tpmsdf)

@@ -6,3 +6,4 @@ results/
 test/
 testing*
 *.pyc
+toy_data/
