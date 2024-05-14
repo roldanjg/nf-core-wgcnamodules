@@ -356,20 +356,6 @@
                     "description": "Type of feature we have, often 'gene'",
                     "fa_icon": "fas fa-keyboard"
                 },
-                "sizefactors_from_controls": {
-                    "type": "boolean",
-                    "help_text": "Use supplied control features in normalistion/ scaling operations?",
-                    "description": "When set, use the control features in scaling/ normalisation",
-                    "fa_icon": "fas fa-expand-arrows-alt"
-                },
-                "control_features": {
-                    "type": "string",
-                    "description": "A text file listing technical features (e.g. spikes)",
-                    "help_text": "One feature per row. Note that by default these features will just be stripped from matrices prior to internal processing. To actually use them in e.g. normalisation, set `--sizefactors_from_controls`",
-                    "format": "file-path",
-                    "mimetype": "text/plain",
-                    "fa_icon": "fas fa-gamepad"
-                },
                 "features_metadata_cols": {
                     "type": "string",
                     "default": "gene_id,gene_name,gene_biotype",
@@ -383,18 +369,6 @@
                     "description": "This parameter allows you to supply your own feature annotations. These can often be automatically derived from the GTF used upstream for RNA-seq, or from the Bioconductor annotation package (for affy arrays). ",
                     "help_text": "This parameter allows you to supply your own feature annotations. These can often be automatically derived from the GTF used upstream for RNA-seq, or from the Bioconductor annotation package (for affy arrays). ",
                     "fa_icon": "fas fa-align-justify"
-                },
-                "features_gtf_feature_type": {
-                    "type": "string",
-                    "default": "transcript",
-                    "description": "Where a GTF file is supplied, which feature type to use",
-                    "fa_icon": "fas fa-keyboard"
-                },
-                "features_gtf_table_first_field": {
-                    "type": "string",
-                    "default": "gene_id",
-                    "description": "Where a GTF file is supplied, which field should go first in the converted output table",
-                    "fa_icon": "fas fa-fast-backward"
                 },
                 "features_log2_assays": {
                     "type": "string",

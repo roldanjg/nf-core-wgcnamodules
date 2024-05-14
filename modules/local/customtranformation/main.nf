@@ -7,7 +7,7 @@ process CUSTOM_FILES_TRANSFORMATION {
     path input_wgcna
     path contrast_wgcna
     path tpms_wgcna
-    path genes
+    val genes
 
     output:
     path '*.csv'       , emit: csv
@@ -19,33 +19,18 @@ process CUSTOM_FILES_TRANSFORMATION {
     script:
     def args = task.ext.args ?: ''
 
-    if (params.diffgenes == true) {
-        """
-        customETL.py \\
-            --input_wgcna $input_wgcna \\
-            --contrast_wgcna $contrast_wgcna \\
-            --tpms_wgcna $tpms_wgcna \\
-            $args
 
-        cat <<-END_VERSIONS > versions.yml
-        "${task.process}":
-            python: \$(python --version | sed 's/Python //g')
-        END_VERSIONS
-        """
+    """
+    customETL.py \\
+        --input_wgcna $input_wgcna \\
+        --contrast_wgcna $contrast_wgcna \\
+        --tpms_wgcna $tpms_wgcna \\
+        --genes $genes \\
+        $args
 
-    } else {
-        """
-        customETL.py \\
-            --input_wgcna $input_wgcna \\
-            --contrast_wgcna $contrast_wgcna \\
-            --tpms_wgcna $tpms_wgcna \\
-            --genes $genes \\
-            $args
-
-        cat <<-END_VERSIONS > versions.yml
-        "${task.process}":
-            python: \$(python --version | sed 's/Python //g')
-        END_VERSIONS
-        """
-    }
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //g')
+    END_VERSIONS
+    """
 }

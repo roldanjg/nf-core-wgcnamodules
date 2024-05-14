@@ -29,7 +29,6 @@ include { DESEQ2_DIFFERENTIAL as DESEQ2_NORM} from '../../../modules/nf-core/des
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../../../modules/nf-core/custom/dumpsoftwareversions/main'
 include { CUSTOM_MATRIXFILTER } from '../../../modules/nf-core/custom/matrixfilter/main'
 include { RMARKDOWNNOTEBOOK } from '../../../modules/nf-core/rmarkdownnotebook/main'
-include { SHINYNGS_APP } from '../../../modules/nf-core/shinyngs/app/main'
 include { SHINYNGS_STATICDIFFERENTIAL as PLOT_DIFFERENTIAL  } from '../../../modules/nf-core/shinyngs/staticdifferential/main'
 include { SHINYNGS_STATICEXPLORATORY as PLOT_EXPLORATORY    } from '../../../modules/nf-core/shinyngs/staticexploratory/main'
 include { SHINYNGS_VALIDATEFOMCOMPONENTS  as VALIDATOR} from '../../../modules/nf-core/shinyngs/validatefomcomponents/main'
@@ -109,7 +108,7 @@ workflow DIFFERENTIALABUNDANCE {
         ch_control_features,
         ch_transcript_lengths
     )
-    
+    // DESEQ2_DIFFERENTIAL.out.results.flatten().view()
     // Let's make the simplifying assumption that the processed matrices from
     // the DESeq runs are the same across contrasts. We run the DESeq process
     // with matrices once for each contrast because DESeqDataSetFromMatrix()
@@ -121,6 +120,8 @@ workflow DIFFERENTIALABUNDANCE {
     ch_differential = DESEQ2_DIFFERENTIAL.out.results
     ch_model = DESEQ2_DIFFERENTIAL.out.model
 
+    ch_versions = ch_versions
+        .mix(DESEQ2_NORM.out.versions)
     ch_versions = ch_versions
         .mix(DESEQ2_DIFFERENTIAL.out.versions)
 
@@ -148,75 +149,69 @@ workflow DIFFERENTIALABUNDANCE {
     }
     .first()
 
-    PLOT_EXPLORATORY(
-        ch_contrast_variables
-            .combine(ch_all_matrices.map{ it.tail() })
-    )
-
-    // Differential analysis using the results of DESeq2
-
-    PLOT_DIFFERENTIAL(
-        ch_differential,
-        ch_all_matrices
-    )
-
-    // Gather software versions
-
-    ch_versions = ch_versions
-        .mix(VALIDATOR.out.versions)
-        .mix(PLOT_EXPLORATORY.out.versions)
-        .mix(PLOT_DIFFERENTIAL.out.versions)
-
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
-
-    // Generate a list of files that will be used by the markdown report
-
-    ch_report_file = Channel.from(report_file)
-        .map{ tuple(exp_meta, it) }
-
-    ch_logo_file = Channel.from(logo_file)
-    ch_css_file = Channel.from(css_file)
-    ch_citations_file = Channel.from(citations_file)
-
-    ch_report_input_files = ch_all_matrices
-        .map{ it.tail() }
-        .map{it.flatten()}
-        .combine(VALIDATOR.out.contrasts.map{it.tail()})
-        .combine(CUSTOM_DUMPSOFTWAREVERSIONS.out.yml)
-        .combine(ch_logo_file)
-        .combine(ch_css_file)
-        .combine(ch_citations_file)
-        .combine(ch_differential.map{it[1]}.toList())
-        .combine(ch_model.map{it[1]}.toList())
-
-     // Make a params list - starting with the input matrices and the relevant
-    // params to use in reporting
-
-    def report_file_names = [ 'observations', 'features' ] +
-        params.exploratory_assay_names.split(',').collect { "${it}_matrix".toString() } +
-        [ 'contrasts_file', 'versions_file', 'logo', 'css', 'citations' ]
-    def params_pattern = ~/^(report|study|observations|features|filtering|exploratory|differential|deseq2|gsea).*/
-    ch_report_params = ch_report_input_files
-        .map{
-            params.findAll{ k,v -> k.matches(params_pattern) } +
-            [report_file_names, it.collect{ f -> f.name}].transpose().collectEntries()
-        }
-
-    // Render the final report
-    RMARKDOWNNOTEBOOK(
-        ch_report_file,
-        ch_report_params,
-        ch_report_input_files
-    )
-
-    // Make a report bundle comprising the markdown document and all necessary
-    // input files
-
-    // MAKE_REPORT_BUNDLE(
-    //     RMARKDOWNNOTEBOOK.out.parameterised_notebook
-    //         .combine(ch_report_input_files)
-    //         .map{[it[0], it[1..-1]]}
+    // PLOT_EXPLORATORY(
+    //     ch_contrast_variables
+    //         .combine(ch_all_matrices.map{ it.tail() })
     // )
+
+    // // Differential analysis using the results of DESeq2
+
+    // PLOT_DIFFERENTIAL(
+    //     ch_differential,
+    //     ch_all_matrices
+    // )
+    
+    // // Gather software versions
+
+    // ch_versions = ch_versions
+    //     .mix(VALIDATOR.out.versions)
+    //     .mix(PLOT_EXPLORATORY.out.versions)
+    //     .mix(PLOT_DIFFERENTIAL.out.versions)
+
+    // CUSTOM_DUMPSOFTWAREVERSIONS (
+    //     ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    // )
+
+    // // Generate a list of files that will be used by the markdown report
+
+    // ch_report_file = Channel.from(report_file)
+    //     .map{ tuple(exp_meta, it) }
+
+    // ch_logo_file = Channel.from(logo_file)
+    // ch_css_file = Channel.from(css_file)
+    // ch_citations_file = Channel.from(citations_file)
+
+    // ch_report_input_files = ch_all_matrices
+    //     .map{ it.tail() }
+    //     .map{it.flatten()}
+    //     .combine(VALIDATOR.out.contrasts.map{it.tail()})
+    //     .combine(CUSTOM_DUMPSOFTWAREVERSIONS.out.yml)
+    //     .combine(ch_logo_file)
+    //     .combine(ch_css_file)
+    //     .combine(ch_citations_file)
+    //     .combine(ch_differential.map{it[1]}.toList())
+    //     .combine(ch_model.map{it[1]}.toList())
+
+    //  // Make a params list - starting with the input matrices and the relevant
+    // // params to use in reporting
+
+    // def report_file_names = [ 'observations', 'features' ] +
+    //     params.exploratory_assay_names.split(',').collect { "${it}_matrix".toString() } +
+    //     [ 'contrasts_file', 'versions_file', 'logo', 'css', 'citations' ]
+    // def params_pattern = ~/^(report|study|observations|features|filtering|exploratory|differential|deseq2|gsea).*/
+    // ch_report_params = ch_report_input_files
+    //     .map{
+    //         params.findAll{ k,v -> k.matches(params_pattern) } +
+    //         [report_file_names, it.collect{ f -> f.name}].transpose().collectEntries()
+    //     }
+
+    // // Render the final report
+    // RMARKDOWNNOTEBOOK(
+    //     ch_report_file,
+    //     ch_report_params,
+    //     ch_report_input_files
+    // )
+    emit:
+    tables         = ch_differential
+    versions       = ch_versions                                // channel: [ versions.yml ]
 }
