@@ -42,7 +42,7 @@ def genes_extraction(genes, fdr,log2fold):
                 ):
                     genes_list.add(gene_id)
     
-    with open("genes.txt", "w") as genes_to_save:
+    with open("diff_selected_genes.txt", "w") as genes_to_save:
         for gene in genes_list:
             genes_to_save.write(f"{gene}\n")
                     
@@ -98,7 +98,7 @@ def main(args=None):
     # generate genes.txt from diff expression
     if 'tsv+c+' in args.genes:
         genes_extraction(args.genes, args.log2ratio, args.fdr)
-        args.genes = 'genes.txt'
+        args.genes = 'diff_selected_genes.txt'
     
     # extract
     metadata, tpmsdf = load_data(args.input_wgcna,args.contrast_wgcna,args.tpms_wgcna,args.genes)

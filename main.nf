@@ -19,30 +19,6 @@ nextflow.enable.dsl = 2
 
 include { WGCNAMODULES  } from './workflows/wgcnamodules'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_wgcnamodules_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_wgcnamodules_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_wgcnamodules_pipeline'
-
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NAMED WORKFLOWS FOR PIPELINE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//
-// WORKFLOW: Run main analysis pipeline depending on type of input
-//
-workflow NFCORE_WGCNAMODULES {
-    main:
-    //
-    // WORKFLOW: Run pipeline
-    //
-    WGCNAMODULES ()
-
-    // emit:
-    // multiqc_report = WGCNAMODULES.out.multiqc_report // channel: /path/to/multiqc_report.html
-
-}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,7 +37,7 @@ workflow {
         params.version,
         params.help,
         params.validate_params,
-        params.monochrome_logs,
+        false,
         args,
         params.outdir
     )
@@ -69,20 +45,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_WGCNAMODULES ()
-
-    //
-    // SUBWORKFLOW: Run completion tasks
-    //
-    // PIPELINE_COMPLETION (
-    //     params.email,
-    //     params.email_on_fail,
-    //     params.plaintext_email,
-    //     params.outdir,
-    //     params.monochrome_logs,
-    //     params.hook_url
-    //     NFCORE_WGCNAMODULES.out.multiqc_report
-    // )
+    WGCNAMODULES ()
 }
 
 /*

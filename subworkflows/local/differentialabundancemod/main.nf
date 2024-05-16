@@ -32,25 +32,19 @@ include { RMARKDOWNNOTEBOOK } from '../../../modules/nf-core/rmarkdownnotebook/m
 include { SHINYNGS_STATICDIFFERENTIAL as PLOT_DIFFERENTIAL  } from '../../../modules/nf-core/shinyngs/staticdifferential/main'
 include { SHINYNGS_STATICEXPLORATORY as PLOT_EXPLORATORY    } from '../../../modules/nf-core/shinyngs/staticexploratory/main'
 include { SHINYNGS_VALIDATEFOMCOMPONENTS  as VALIDATOR} from '../../../modules/nf-core/shinyngs/validatefomcomponents/main'
-include { ZIP as MAKE_REPORT_BUNDLE                         } from '../../../modules/nf-core/zip/main'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-// process checalgo (
-//     input: estose
-//     output:
-//     estose
-// )
+
 workflow DIFFERENTIALABUNDANCE {
 
     // Set up some basic variables
     ch_versions = Channel.empty()
     // Channel for the contrasts file
     ch_contrasts_file = Channel.from([[exp_meta, file(params.contrast)]])
-
-    
 
     // // Otherwise we can just use the matrix input; save it to the workdir so that it does not
     // // just appear wherever the user runs the pipeline
@@ -99,8 +93,8 @@ workflow DIFFERENTIALABUNDANCE {
             ch_transcript_lengths
         )
 
-        // Run the DESeq differential module, which doesn't take the feature
-        // annotations
+    // Run the DESeq differential module, which doesn't take the feature
+    // annotations
 
     DESEQ2_DIFFERENTIAL (
         ch_contrasts,
@@ -142,75 +136,75 @@ workflow DIFFERENTIALABUNDANCE {
     ch_mat = ch_raw.combine(ch_processed_matrices)
 
     ch_all_matrices = VALIDATOR.out.sample_meta                // meta, samples
-    .join(VALIDATOR.out.feature_meta)                       // meta, samples, features
-    .join(ch_mat)                                           // meta, samples, features, raw, norm (or just norm)
+    .join(VALIDATOR.out.feature_meta)                          // meta, samples, features
+    .join(ch_mat)                                              // meta, samples, features, raw, norm (or just norm)
     .map{
         tuple(it[0], it[1], it[2], it[3..it.size()-1])
     }
     .first()
 
-    // PLOT_EXPLORATORY(
-    //     ch_contrast_variables
-    //         .combine(ch_all_matrices.map{ it.tail() })
-    // )
+    PLOT_EXPLORATORY(
+        ch_contrast_variables
+            .combine(ch_all_matrices.map{ it.tail() })
+    )
 
-    // // Differential analysis using the results of DESeq2
+    // Differential analysis using the results of DESeq2
 
-    // PLOT_DIFFERENTIAL(
-    //     ch_differential,
-    //     ch_all_matrices
-    // )
+    PLOT_DIFFERENTIAL(
+        ch_differential,
+        ch_all_matrices
+    )
     
-    // // Gather software versions
+    // Gather software versions
 
-    // ch_versions = ch_versions
-    //     .mix(VALIDATOR.out.versions)
-    //     .mix(PLOT_EXPLORATORY.out.versions)
-    //     .mix(PLOT_DIFFERENTIAL.out.versions)
+    ch_versions = ch_versions
+        .mix(VALIDATOR.out.versions)
+        .mix(PLOT_EXPLORATORY.out.versions)
+        .mix(PLOT_DIFFERENTIAL.out.versions)
 
-    // CUSTOM_DUMPSOFTWAREVERSIONS (
-    //     ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    // )
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
-    // // Generate a list of files that will be used by the markdown report
+    // Generate a list of files that will be used by the markdown report
 
-    // ch_report_file = Channel.from(report_file)
-    //     .map{ tuple(exp_meta, it) }
+    ch_report_file = Channel.from(report_file)
+        .map{ tuple(exp_meta, it) }
 
-    // ch_logo_file = Channel.from(logo_file)
-    // ch_css_file = Channel.from(css_file)
-    // ch_citations_file = Channel.from(citations_file)
+    ch_logo_file = Channel.from(logo_file)
+    ch_css_file = Channel.from(css_file)
+    ch_citations_file = Channel.from(citations_file)
 
-    // ch_report_input_files = ch_all_matrices
-    //     .map{ it.tail() }
-    //     .map{it.flatten()}
-    //     .combine(VALIDATOR.out.contrasts.map{it.tail()})
-    //     .combine(CUSTOM_DUMPSOFTWAREVERSIONS.out.yml)
-    //     .combine(ch_logo_file)
-    //     .combine(ch_css_file)
-    //     .combine(ch_citations_file)
-    //     .combine(ch_differential.map{it[1]}.toList())
-    //     .combine(ch_model.map{it[1]}.toList())
+    ch_report_input_files = ch_all_matrices
+        .map{ it.tail() }
+        .map{it.flatten()}
+        .combine(VALIDATOR.out.contrasts.map{it.tail()})
+        .combine(CUSTOM_DUMPSOFTWAREVERSIONS.out.yml)
+        .combine(ch_logo_file)
+        .combine(ch_css_file)
+        .combine(ch_citations_file)
+        .combine(ch_differential.map{it[1]}.toList())
+        .combine(ch_model.map{it[1]}.toList())
 
-    //  // Make a params list - starting with the input matrices and the relevant
-    // // params to use in reporting
+    // Make a params list - starting with the input matrices and the relevant
+    // params to use in reporting
 
-    // def report_file_names = [ 'observations', 'features' ] +
-    //     params.exploratory_assay_names.split(',').collect { "${it}_matrix".toString() } +
-    //     [ 'contrasts_file', 'versions_file', 'logo', 'css', 'citations' ]
-    // def params_pattern = ~/^(report|study|observations|features|filtering|exploratory|differential|deseq2|gsea).*/
-    // ch_report_params = ch_report_input_files
-    //     .map{
-    //         params.findAll{ k,v -> k.matches(params_pattern) } +
-    //         [report_file_names, it.collect{ f -> f.name}].transpose().collectEntries()
-    //     }
+    def report_file_names = [ 'observations', 'features' ] +
+        params.exploratory_assay_names.split(',').collect { "${it}_matrix".toString() } +
+        [ 'contrasts_file', 'versions_file', 'logo', 'css', 'citations' ]
+    def params_pattern = ~/^(report|study|observations|features|filtering|exploratory|differential|deseq2|gsea).*/
+    ch_report_params = ch_report_input_files
+        .map{
+            params.findAll{ k,v -> k.matches(params_pattern) } +
+            [report_file_names, it.collect{ f -> f.name}].transpose().collectEntries()
+        }
 
-    // // Render the final report
-    // RMARKDOWNNOTEBOOK(
-    //     ch_report_file,
-    //     ch_report_params,
-    //     ch_report_input_files
-    // )
+    // Render the final report
+    RMARKDOWNNOTEBOOK(
+        ch_report_file,
+        ch_report_params,
+        ch_report_input_files
+    )
     emit:
     tables         = ch_differential
     versions       = ch_versions                                // channel: [ versions.yml ]

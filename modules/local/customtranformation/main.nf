@@ -10,8 +10,9 @@ process CUSTOM_FILES_TRANSFORMATION {
     val genes
 
     output:
-    path '*.csv'       , emit: csv
-    path "versions.yml", emit: versions
+    path '*.csv'                         , emit: csv
+    path '*diff_selected_genes.txt'       , optional: true
+    path "versions.yml"                  , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
