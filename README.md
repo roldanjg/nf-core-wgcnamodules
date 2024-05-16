@@ -38,7 +38,7 @@
 1. RNA-seq quantification using nf-core pipeline ([`nf-core/rnaseq`](https://github.com/nf-core/rnaseq)).
 2. Differential Expression Genes filter ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)).
 3. WGCNA ([`WGCNA`](https://cran.r-project.org/web/packages/WGCNA/index.html)).
-4. TDTHub [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/).
+4. TDTHub ([`TDTHub`](http://acrab.cnb.csic.es/TDTHub/)).
 ## Usage
 
 > **NOTE**
@@ -77,9 +77,9 @@ TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2
 ```
 Where the columns correspond to: 
 1.	‘contrast’: a custom name used to identify the contrast.
-2.	‘variable‘:  the name of the column from 'samplesheet_wgcna.csv' file that contains the condition ids. 
-3.	control: the base/reference level for the contrast. 
-4.	target: the target/ non-reference level for the comparison. 
+2.	‘variable':  the name of the column from 'samplesheet_wgcna.csv' file that contains the condition ids. 
+3.	'control': the base/reference level for the contrast. 
+4.	'target': the target/ non-reference level for the comparison. 
 
 
 <!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
@@ -100,7 +100,7 @@ Each row represents a fastq file (single-end) or a pair of fastq files (paired e
 
 Now, you can run the pipeline using:
 ```bash
-nextflow run nf-core/wgcnamodules \
+nextflow run nf-core-wgcnamodules \
     -profile conda \
     --input samplesheet_wgcna.csv \ 
     --contrast contrasts_wgcna.csv \
