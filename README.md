@@ -21,11 +21,9 @@
 
 **nf-core-wgcnamodules** is a bioinformatics pipeline complementary to [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) and [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/) that can be used to infer relevant TF regulators in 60 different plant species from RNA-seq data. It takes a samplesheet and the salmon folder from a RNA-seq quantification analisys with  [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq), performs a diferential expression analisys, WGCNA, and generates clusters of co-expressed genes to search for enriched TFBS using [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/).
 
-<h1>
-  <picture>
-    <img src="docs/images/infograph.png">
-  </picture>
-</h1>
+<picture>
+  <img src="docs/images/infograph.png">
+</picture>
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
