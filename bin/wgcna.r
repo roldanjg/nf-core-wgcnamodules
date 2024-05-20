@@ -4,17 +4,14 @@ library(WGCNA);
 library(ComplexHeatmap)
 library(circlize)
 args = commandArgs(trailingOnly=TRUE)
-# if (length(args) < 5) {
-#     stop("Usage: dupRadar.r <input.bam> <annotation.gtf> <strandDirection:0=unstranded/1=forward/2=reverse> <paired/single> <nbThreads> <R-package-location (optional)>", call.=FALSE)
-# }
+
+
 input_wgcna <- args[1]
 allowWGCNAThreads()
-message("Input bam      (Arg 1): ", input_wgcna)
+message("Input wgcna      (Arg 1): ", input_wgcna)
 
 # Display the current working directory
 
-# If necessary, change the path below to the directory where the data files are stored.
-# "." means current directory. On Windows use a forward slash / instead of the usual \.
 # Load the WGCNA package
 
 # The following setting is important, do not omit.
@@ -25,8 +22,6 @@ femData = read.csv(input_wgcna);
 
 # define the cutting line for the tree of samples
 cutthreshold = 1000000 
-
-# names(femData);
 
 datExpr0 = as.data.frame(femData[, -1]);
 rownames(datExpr0) = femData$gene_id;
@@ -64,6 +59,7 @@ datExpr0 = datExpr0[gsg$goodSamples, gsg$goodGenes]
 # # clust 1 contains the samples we want to keep.
 # keepSamples = (clust==1)
 # datExpr = datExpr0[keepSamples, ]
+
 datExpr = datExpr0
 nGenes = ncol(datExpr)
 nSamples = nrow(datExpr)
@@ -84,77 +80,48 @@ abline(h = cutthreshold, col = "red");
 dev.off()
 
 
-# powers = c(c(1:10), seq(from = 12, to=30, by=2))
-# paste(powers)
-# # https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/
-# # we pick a network type signed:
-# # By and large, I recommend using one of the signed varieties, for two main reasons.
-# #  First, more often than not, direction does matter: it is important to know where 
-# #  node profiles go up and where they go down, and mixing negatively correlated nodes 
-# #  together necessarily mixes the two directions together. Second, negatively correlated
-# #   nodes often belong to different categories
-# sft = pickSoftThreshold(datExpr, powerVector = powers, RsquaredCut = 0.8, verbose = 5, networkType="signed")
+powers = c(c(1:10), seq(from = 12, to=30, by=2))
+paste(powers)
+# https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/
+# we pick a network type signed:
+#  By and large, I recommend using one of the signed varieties, for two main reasons.
+#  First, more often than not, direction does matter: it is important to know where 
+#  node profiles go up and where they go down, and mixing negatively correlated nodes 
+#  together necessarily mixes the two directions together. Second, negatively correlated
+#  nodes often belong to different categories
+sft = pickSoftThreshold(datExpr, powerVector = powers, RsquaredCut = 0.8, verbose = 5, networkType="signed")
 
-# pdf(file = "2-n-sft-signed.pdf", width = 9, height = 5);
-# pdf(file = "nuevo_2-n-sft-signed.pdf", width = 9, height = 5);
-# sizeGrWindow(9, 5)
-# par(mfrow = c(1,2));
-# cex1 = 0.9;
+pdf(file = "2-n-sft-signed.pdf", width = 9, height = 5);
+pdf(file = "nuevo_2-n-sft-signed.pdf", width = 9, height = 5);
+sizeGrWindow(9, 5)
+par(mfrow = c(1,2));
+cex1 = 0.9;
 
-
-# # Scale-free topology fit index as a function of the soft-thresholding power
-# # Scale-free networks – In scale-free networks most of the nodes are connected to a low number of neighbours 
-# # and there are a small number of high-degree nodes (hubs) that provide high connectivity to the network. 
-# # https://peterlangfelder.com/2018/11/25/__trashed/
-# # nalysis of network topology for various soft-thresholding powersnalysis of network topology for various soft-thresholding powers
-# #  we wnat a free topology that better recreates genomic networks
-# # what if the topology is not the same in all the species. Studdies of networks topology in specific species.
-# plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
-# xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type="n",
-# main = paste("Scale independence"));
-# text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
-# labels=powers,cex=cex1,col="red");
-# # this line corresponds to using an R^2 cut-off of h
-# abline(h=0.80,col="red")
-# # Mean connectivity as a function of the soft-thresholding power
-# plot(sft$fitIndices[,1], sft$fitIndices[,5],
-# xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",
-# main = paste("Mean connectivity"))
-# text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
-# dev.off()
-# paste(sft$powerEstimate)
+plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type="n",
+main = paste("Scale independence"));
+text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+labels=powers,cex=cex1,col="red");
+# this line corresponds to using an R^2 cut-off of h
+abline(h=0.80,col="red")
+# Mean connectivity as a function of the soft-thresholding power
+plot(sft$fitIndices[,1], sft$fitIndices[,5],
+xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",
+main = paste("Mean connectivity"))
+text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
+dev.off()
+paste(sft$powerEstimate)
 
 
-# if (any(is.na(sft$powerEstimate))){
-#     pwsv = 6
-# } else {
-#     pwsv = sft$powerEstimate
-# }
-# paste(pwsv)
+if (any(is.na(sft$powerEstimate))){
+    pwsv = 6
+} else {
+    pwsv = sft$powerEstimate
+}
+paste(pwsv)
 pwsv = 6
 paste(pwsv)
-# netwk = blockwiseModules(
-#     datExpr,
-#     minNSamples = 2,
-#     power = pwsv,
-#     TOMType = "signed",
-#     minModuleSize = 30,
-#     reassignThreshold = 0,
-#     mergeCutHeight = 0.25,
-#     numericLabels = TRUE,
-#     pamRespectsDendro = FALSE,
-#     saveTOMs = TRUE,
-#     saveTOMFileBase = "${in_RData.simpleName}TOM",
-#     verbose = 3)
-# mergedColors = labels2colors(netwk\$colors)
-# png("wgcna_modules.png", width=800, height=300)
-# plotDendroAndColors(
-# netwk$dendrograms[[1]],
-# mergedColors[netwk$blockGenes[[1]]],
-# "Module colors",
-# dendroLabels = FALSE, hang = 0.03,
-# addGuide = TRUE, guideHang = 0.05)
-# dev.off()
+
 pdf(file = "2-n-softConnectivity-correlation.pdf", width = 9, height = 5);
 k=softConnectivity(datE=datExpr,power=pwsv, minNSamples=2)
 # Plot a histogram of k and a scale free t
@@ -292,12 +259,9 @@ for (mod in 1:ncol(geneModuleMembership))
 
 write.csv(geneInfo0, file = "gene_info.csv")
 
-
-
 mesresult = as.matrix(read.csv("module_eigengene_values.csv", header=TRUE, sep=",",row.names = 1,as.is=TRUE))
 
 col_fun1 = colorRamp2(c(-0.5, 0, 0.5), c("blue", "white", "red"))
-
 
 png("module_trait_relationship.png", res = 300, unit = "cm", height = 15, width = 20)
 Heatmap(mesresult, col = col_fun1,
@@ -308,5 +272,5 @@ Heatmap(mesresult, col = col_fun1,
                 column_names_rot = 90,
                 heatmap_legend_param = list(title ="cor")
                 )
-               
+      
 dev.off()

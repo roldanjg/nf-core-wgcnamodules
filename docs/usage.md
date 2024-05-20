@@ -1,68 +1,78 @@
-# nf-core/wgcnamodules: Usage
-
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/wgcnamodules/usage](https://nf-co.re/wgcnamodules/usage)
-
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+# nf-core-wgcnamodules: Usage
 
 ## Introduction
 
+The computational pipeline detailed in this documentation one of the steps in a 3 steps workflow to  to infer TF regulators applicable to 60 plant species from RNA sequencing (RNA-seq) data as the starting point.It consists of 3 main parts. The first part, is RNA-Seq quantification, using [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) pipeline. The second part, nf-core-wgcnamodules, is executed from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) results and consists of an optional idetification of differentially expressed genes between pairs of contrasts, and the use of gene expression levels to perform a clustering analysis using Weighted Correlation Network Analysis (WGCNA). In the last step, genes corresponding to each cluster are used for the identification of enriched TF binding sites that could help to determine the most relevant transcriptional regulators involved in the biological process under study using the webpage [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/). This documentation detail the use of nf-core-wgcnamodules.
 <!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
 
-## Samplesheet input
+## Samplesheet inputs
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create two samplesheets with information about the samples you would like to analyse before running the pipeline, and the contrasts you would like to study between those samples. Both have to be a comma-separated file with the number of columns  and a header row as shown in the examples below.
 
 ```bash
---input '[path to samplesheet file]'
+--input '[path to samplesheet file]' --contrast '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
+### Input samplesheet
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+You can adapt the shamplesheet input file from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) as the pipelines are intended to run in a complementary way. It is important that the `sample` field matches the header in the Salmon folder files that are generated from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq).
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
-### Full samplesheet
-
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
-
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample,condition,replicate
+CONTROL1_REP1,CONTROL1,1
+CONTROL1_REP2,CONTROL1,2
+TREATMENT1_REP1,TREATMENT1,1
+TREATMENT1_REP2,TREATMENT1,2
+TREATMENT2_REP1,TREATMENT2,1
+TREATMENT2_REP2,TREATMENT2,2
 ```
 
 | Column    | Description                                                                                                                                                                            |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| `sample`  | Custom sample name. Same name as the 'samplesheet_rnaseq.csv' sample column. |
+| `condition` | Name of the treatment, genotype or group that defines an experimental condition with one or multiple replicates.                                                             |
+| `replicate` |Number of the biological replicate. |
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+An [example input samplesheet](../assets/samplesheet_wgcna.csv) has been provided with the pipeline.
+
+### Contrast samplesheet
+
+The contrasts file references the observations file to define groups of samples to compare. For example, based on the sample sheet above we could define contrasts like:
+
+```csv title="contrast_wgcna.csv"
+contrast,variable,control,target
+TREATMENT1_vs_CONTROL1,condition,CONTROL1,TREATMENT1
+TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2 
+```
+| Column    | Description                                                                                                                                                                            |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `contrast`  | A custom name used to identify the contrast. |
+| `variable` | The name of the column from 'samplesheet_wgcna.csv' file that contains the condition ids. |
+| `control` | The base/reference level for the contrast.  |
+| `target` | The target/ non-reference level for the comparison.  
+
+An [example contrast samplesheet](../assets/samplesheet_contrast.csv) has been provided with the pipeline.
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/wgcnamodules --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core-wgcnamodules \
+    -profile conda \
+    --input samplesheet_wgcna.csv \ 
+    --contrast contrasts_wgcna.csv \
+    --salmon_dir <PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon \
+    --diff_exp_genes true \
+    --outdir <OUTDIR>
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+This will launch the pipeline with the `conda` configuration profile. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
+
+
 
 ```bash
 work                # Directory containing the nextflow working files
@@ -82,29 +92,94 @@ Do not use `-c <file>` to specify parameters as this will result in errors. Cust
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run nf-core/wgcnamodules -profile docker -params-file params.yaml
+nextflow run nf-core-wgcnamodules -profile docker -params-file params.yaml
 ```
 
 with `params.yaml` containing:
 
 ```yaml
-input: './samplesheet.csv'
-outdir: './results/'
-genome: 'GRCh37'
+input: './samplesheet_wgcna.csv'
+contrast: './contrasts_wgcna.csv'
+salmon_dir: '<PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon' 
+diff_exp_genes: true
+outdir: <OUTDIR>
 <...>
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
-### Updating the pipeline
+## Main arguments
+### `--salmon_dir`
+Use this to specify the path tho the location of your [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) folder with Salmon output, including raw quantified reads and TPM- (tags per million)-normalized expression matrix:
+
+```bash
+--salmon_dir '<PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon'
+```
+
+Please note the following requirements:
+
+1. The format of the files inside the folder should be the same as the format obtained by running salmon with [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) pipeline.
+2. The folder should contain at leats these three files inside: `salmon.merged.gene_counts.tsv`, `salmon.merged.gene_lengths.tsv`, `salmon.merged.gene_tpm.tsv`.
+
+
+
+### `--diff_exp_genes [true/false]`
+Whether to perform differential expression analysis `true` or not `false` to select only DE genes for clustering. :
+
+```bash
+--diff_exp_genes true
+```
+
+It is not compatible with the option `--genes`.
+
+### `--fdr [number] --log2fold [number]`
+If `--diff_exp_genes true`, you can also select the Log2Fold and FDR threshold to extract DE genes for clustering. Default values are:
+
+```bash
+--fdr 0.05 --log2fold 1
+```
+
+### `--genes *.txt`
+If `--diff_exp_genes false`, you can introduce your custom list of genes to perform WGCNA clustering.:
+
+```bash
+--genes <FILE>.txt
+```
+Please note the following requirements:
+
+1. It is important to introduce a minimum of 50 genes to have at least 2 clusters. The process may fail because there are too few genes to group together.
+2. The genes should appear in a `.txt` file with one gene on each line.
+3. The gene names must be the same as those that appear in the `gene_id` column of the `salmon.merged.gene_tpm.tsv` file.
+4. If you do not provide the `--genes *.txt` and set the `--diff_exp_genes false`, the clustering will be done with all the genes in the species genome.
+
+## Running in the background
+
+Nextflow handles job submissions and supervises the running jobs. The Nextflow process must run until the pipeline is finished.
+
+The Nextflow `-bg` flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out of your session. The logs are saved to a file.
+
+Alternatively, you can use `screen` / `tmux` or similar tool to create a detached session which you can log back into at a later time.
+Some HPC setups also allow you to run nextflow within a cluster job submitted your job scheduler (from where it submits more jobs).
+
+## Nextflow memory requirements
+
+In some cases, the Nextflow Java virtual machines can start to request a large amount of memory.
+We recommend adding the following line to your environment to limit this (typically in `~/.bashrc` or `~./bash_profile`):
+
+```bash
+NXF_OPTS='-Xms1g -Xmx4g'
+```
+
+
+<!-- ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
 ```bash
 nextflow pull nf-core/wgcnamodules
-```
+``` -->
 
-### Reproducibility
+<!-- ### Reproducibility
 
 It is a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
@@ -116,9 +191,9 @@ To further assist in reproducbility, you can use share and re-use [parameter fil
 
 :::tip
 If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
-:::
+::: -->
 
-## Core Nextflow arguments
+## Core Nextflow arguments (for advance users)
 
 :::note
 These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen).
@@ -136,26 +211,17 @@ We highly recommend the use of Docker or Singularity containers for full pipelin
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
-Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
+Note that multiple profiles can be loaded, for example: `-profile test,conda` - the order of arguments is important!
 They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
 If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer enviroment.
 
-- `test`
+At this time the pipeline only supports one profile: 
+
+<!--TODO GENERATE TEST PROFILE - `test`
   - A profile with a complete configuration for automated testing
-  - Includes links to test data so needs no other parameters
-- `docker`
-  - A generic configuration profile to be used with [Docker](https://docker.com/)
-- `singularity`
-  - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
-- `podman`
-  - A generic configuration profile to be used with [Podman](https://podman.io/)
-- `shifter`
-  - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
-- `charliecloud`
-  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
-- `apptainer`
-  - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
+  - Includes links to test data so needs no other parameters -->
+
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
 
@@ -169,7 +235,7 @@ You can also supply a run name to resume a specific run: `-resume [run-name]`. U
 
 Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
 
-## Custom configuration
+## Custom configuration (for advance users)
 
 ### Resource requests
 
@@ -197,28 +263,4 @@ See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config
 
 If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the [`#configs` channel](https://nfcore.slack.com/channels/configs).
 
-## Azure Resource Requests
 
-To be used with the `azurebatch` profile by specifying the `-profile azurebatch`.
-We recommend providing a compute `params.vm_type` of `Standard_D16_v3` VMs by default but these options can be changed if required.
-
-Note that the choice of VM size depends on your quota and the overall workload during the analysis.
-For a thorough list, please refer the [Azure Sizes for virtual machines in Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes).
-
-## Running in the background
-
-Nextflow handles job submissions and supervises the running jobs. The Nextflow process must run until the pipeline is finished.
-
-The Nextflow `-bg` flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out of your session. The logs are saved to a file.
-
-Alternatively, you can use `screen` / `tmux` or similar tool to create a detached session which you can log back into at a later time.
-Some HPC setups also allow you to run nextflow within a cluster job submitted your job scheduler (from where it submits more jobs).
-
-## Nextflow memory requirements
-
-In some cases, the Nextflow Java virtual machines can start to request a large amount of memory.
-We recommend adding the following line to your environment to limit this (typically in `~/.bashrc` or `~./bash_profile`):
-
-```bash
-NXF_OPTS='-Xms1g -Xmx4g'
-```

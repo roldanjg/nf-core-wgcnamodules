@@ -25,27 +25,21 @@
   <img src="docs/images/infograph.png">
 </picture>
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
-
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
-
 1. RNA-seq quantification using nf-core pipeline ([`nf-core/rnaseq`](https://github.com/nf-core/rnaseq)).
 2. Differential Expression Genes filter ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)).
 3. WGCNA ([`WGCNA`](https://cran.r-project.org/web/packages/WGCNA/index.html)).
 4. TDTHub ([`TDTHub`](http://acrab.cnb.csic.es/TDTHub/)).
 ## Usage
 
-> **NOTE**
-> If you are new to Nextflow and nf-core, please refer the methods in [the book chapter](https://nf-co.re/docs/usage/installation). Otherwhise  refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+<!-- >TODO  **NOTE**
+> If you are new to Nextflow and nf-core, please refer the methods in [the book chapter](https://nf-co.re/docs/usage/installation). Otherwhise  refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data. -->
 
 > **NOTE**
-> Example files to get familiar with and test ithe pipeline are available at [wgcnamodules_testdata](https://github.com/roldanjg/wgcnamodules_testdata). We recommend to test pipeline using these files when you run it for the first time.
+> Example files to get familiar with and test the pipeline are available at [wgcnamodules_testdata](https://github.com/roldanjg/wgcnamodules_testdata). We recommend to test pipeline using these files when you run it for the first time.
+
+> **NOTE**
+> Parameters configuration and extensive details are available in the [documentation](docs/README.md) and in the [the book chapter](https://nf-co.re/docs/usage/installation) associated to this pipeline 
+
 
 First, run ([`nf-core/rnaseq`](https://github.com/nf-core/rnaseq)) and prepare a samplesheet with your input data that looks as follows:
 
@@ -118,7 +112,7 @@ and the [output documentation](docs/output.md).
 
 ## Credits
 
-nf-core/wgcnamodules was originally written by roldanjg. 
+nf-core-wgcnamodules was originally written by roldanjg. 
 
 ## Citations
 
@@ -149,5 +143,6 @@ You can cite the `nf-core` publication as follows:
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
+> _**NOTE** This pipeline was created to run complementary to [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) and is not an official release from the nf-core team, but is intended to subscribe to the standards, practices and procedures established by nf-core community._
 
 <!-- For further information or help, don't hesitate to get in touch on the [Slack `#wgcnamodules` channel](https://nfcore.slack.com/channels/wgcnamodules) (you can join with [this invite](https://nf-co.re/join/slack)). -->
