@@ -30,7 +30,7 @@ TREATMENT2_REP2,TREATMENT2,2
 
 | Column    | Description                                                                                                                                                                            |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. Same name as the 'samplesheet_rnaseq.csv' sample column. |
+| `sample`  | Custom sample name. Same name as the 'samplesheet_rnaseq.csv' sample name from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq). |
 | `condition` | Name of the treatment, genotype or group that defines an experimental condition with one or multiple replicates.                                                             |
 | `replicate` |Number of the biological replicate. |
 
@@ -52,7 +52,7 @@ TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2
 | `control` | The base/reference level for the contrast.  |
 | `target` | The target/ non-reference level for the comparison.  
 
-An [example contrast samplesheet](../assets/samplesheet_contrast.csv) has been provided with the pipeline.
+An [example contrast samplesheet](../assets/contrasts_wgcna.csv) has been provided with the pipeline.
 
 ## Running the pipeline
 
@@ -151,6 +151,8 @@ Please note the following requirements:
 2. The genes should appear in a `.txt` file with one gene on each line.
 3. The gene names must be the same as those that appear in the `gene_id` column of the `salmon.merged.gene_tpm.tsv` file.
 4. If you do not provide the `--genes *.txt` and set the `--diff_exp_genes false`, the clustering will be done with all the genes in the species genome.
+
+An [example genes file](../assets/genes.txt) has been provided with the pipeline.
 
 ## Running in the background
 

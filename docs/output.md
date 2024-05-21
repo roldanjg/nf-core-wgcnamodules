@@ -60,15 +60,16 @@ The DE quantification plots displayed here are part of the `report/study.html`.
 
 </details>
 
-[WGCNA](https://cran.r-project.org/web/packages/WGCNA/index.html) is used to perform gene clustering to identify gene modules highly correlated and, therefore, expected to share some common regulatory mechanisms. Gene clustering can be performed from complete gene sets or form pre-filtered differentially expressed gene (DEG) sets.
+[WGCNA](https://cran.r-project.org/web/packages/WGCNA/index.html) is used to perform gene clustering to identify gene modules highly correlated and, therefore, expected to share some common regulatory mechanisms. Gene clustering can be performed from complete gene sets or from pre-filtered differentially expressed gene (DEG) sets.
 
-![nf-core/differentialabundance markdown report result](images/wgcna_plots.png)
+![nf-core/ markdown report result](images/wgcna_plots.png)
+
 **note**
 `modules_dendogram_before_after.pdf`, `modules_distance.pdf`
 ##
 ![nf-core/differentialabundance markdown report result](images/module_trait_relationship.png)
 **note**
-`module_trait_relationship.png
+`module_trait_relationship.png`
 
 ### Pipeline information
 
