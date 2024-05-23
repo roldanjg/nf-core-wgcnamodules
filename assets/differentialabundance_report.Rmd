@@ -202,7 +202,7 @@ htmltools::includeCSS(params$css)
 cat(paste0("
 <style>
 #TOC {
-   background-image: url(\"", knitr::image_uri(params$logo), "\");
+    background-image: url(\"", knitr::image_uri(params$logo), "\");
 }
 </style>
 "))
@@ -307,7 +307,7 @@ treatment-mCherry-hND6-batcheffect.deseq2.results.tsv
 ```{r, echo=FALSE}
 
 differential_files <- lapply(contrasts$id, function(d){
- file.path(params$input_dir, paste0(gsub(' |;', '_', d), params$differential_file_suffix)) 
+  file.path(params$input_dir, paste0(gsub(' |;', '_', d), params$differential_file_suffix)) 
 })
 
 differential_results <- lapply(differential_files, function(diff_file){
@@ -819,7 +819,7 @@ for (i in 1:nrow(contrasts)){
     max_fc <- max(abs(full_de[[params$differential_fc_column]])) * 1.1
     p <- do.call(plotly_scatterplot, plot_args) %>%
       layout(xaxis = list(range=list(-max_fc, max_fc)))
- 
+
     print(htmltools::tagList(p))
   
     ## ... then show tables of the up/ down genes

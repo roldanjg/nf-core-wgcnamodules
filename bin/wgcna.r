@@ -21,7 +21,7 @@ femData = read.csv(input_wgcna);
 
 
 # define the cutting line for the tree of samples
-cutthreshold = 1000000 
+cutthreshold = 1000000
 
 datExpr0 = as.data.frame(femData[, -1]);
 rownames(datExpr0) = femData$gene_id;
@@ -39,7 +39,7 @@ printFlush(paste("Removing samples:", paste(rownames(datExpr0)[!gsg$goodSamples]
 # Remove the offending genes and samples from the data:
 datExpr0 = datExpr0[gsg$goodSamples, gsg$goodGenes]
 }
-# optionally too, uncoment to use, perform a pre-clustering to filter outliers 
+# optionally too, uncoment to use, perform a pre-clustering to filter outliers
 # pdf(file = "precut-n-sampleClustering.pdf", width = 36, height = 18);
 # sampleTree = hclust(dist(datExpr0), method = "average");
 # # Plot the sample tree: Open a graphic output window of size 12 by 9 inches
@@ -85,8 +85,8 @@ paste(powers)
 # https://peterlangfelder.com/2018/11/25/signed-or-unsigned-which-network-type-is-preferable/
 # we pick a network type signed:
 #  By and large, I recommend using one of the signed varieties, for two main reasons.
-#  First, more often than not, direction does matter: it is important to know where 
-#  node profiles go up and where they go down, and mixing negatively correlated nodes 
+#  First, more often than not, direction does matter: it is important to know where
+#  node profiles go up and where they go down, and mixing negatively correlated nodes
 #  together necessarily mixes the two directions together. Second, negatively correlated
 #  nodes often belong to different categories
 sft = pickSoftThreshold(datExpr, powerVector = powers, RsquaredCut = 0.8, verbose = 5, networkType="signed")
@@ -244,18 +244,16 @@ write.csv(mesmats, file = "module_eigengene_values.csv")
 
 # Create the starting data frame
 geneInfo0 = data.frame(geneid = names(datExpr),
-                      moduleColor = mergedColors)
+                    moduleColor = mergedColors)
 # Add module membership information in the chosen order
 for (mod in 1:ncol(geneModuleMembership))
 {
-  oldNames = names(geneInfo0)
-  geneInfo0 = data.frame(geneInfo0, geneModuleMembership[, mod], 
-                         MMPvalue[, mod]);
-  names(geneInfo0) = c(oldNames, paste("MM.", modNames[mod], sep=""),
-                       paste("p.MM.", modNames[mod], sep=""))
+    oldNames = names(geneInfo0)
+    geneInfo0 = data.frame(geneInfo0, geneModuleMembership[, mod],
+                        MMPvalue[, mod]);
+    names(geneInfo0) = c(oldNames, paste("MM.", modNames[mod], sep=""),
+                        paste("p.MM.", modNames[mod], sep=""))
 }
-
-
 
 write.csv(geneInfo0, file = "gene_info.csv")
 
@@ -272,5 +270,5 @@ Heatmap(mesresult, col = col_fun1,
                 column_names_rot = 90,
                 heatmap_legend_param = list(title ="cor")
                 )
-      
+
 dev.off()

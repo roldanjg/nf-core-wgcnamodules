@@ -35,3 +35,8 @@ indent_style = unset
 # ignore python
 [*.{py,md}]
 indent_style = unset
+
+[*.Rmd]
+indent_size = 2
+indent_style = space
+trim_trailing_whitespace = unset

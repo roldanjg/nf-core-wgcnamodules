@@ -4,7 +4,6 @@
 
 nf-core-wgcnamodules is a best practice pipeline used to generate input files for [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/).
 
-
 This document describes the output produced by the pipeline. Plots are taken from the Markdown report and the output folder, which summarises results at the end of the pipeline.
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
@@ -15,10 +14,8 @@ The directories listed below will be created in the results directory after the 
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/)/nf-core and processes data using the following steps:
 
-
 1. (Optional) Differential Expression Genes filter ([`DESeq2`](#DESeq2)).
 2. WGCNA ([`WGCNA`](https://cran.r-project.org/web/packages/WGCNA/index.html)).
-
 
 ### Differential Expression Genes filter
 
@@ -33,17 +30,14 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/)/nf-core and pro
 - `wgcna_input_files/`
   - `diff_selected_genes.txt`(optional): .
 
-
 </details>
 
 This first step generates the gene list to perform gene clutering, it is based on the [nf-core/differentialabundance](https://nf-co.re/differentialabundance/1.5.0) pipeline.
 
 ![nf-core/differentialabundance markdown report result](images/diff_report.png)
 
-
 **note**
 The DE quantification plots displayed here are part of the `report/study.html`.
-
 
 ### WGCNA
 
@@ -57,7 +51,6 @@ The DE quantification plots displayed here are part of the `report/study.html`.
   - `modules_dendogram_before_after.pdf`: .
   - `modules_distance.pdf`: .
 
-
 </details>
 
 [WGCNA](https://cran.r-project.org/web/packages/WGCNA/index.html) is used to perform gene clustering to identify gene modules highly correlated and, therefore, expected to share some common regulatory mechanisms. Gene clustering can be performed from complete gene sets or from pre-filtered differentially expressed gene (DEG) sets.
@@ -66,7 +59,9 @@ The DE quantification plots displayed here are part of the `report/study.html`.
 
 **note**
 `modules_dendogram_before_after.pdf`, `modules_distance.pdf`
+
 ##
+
 ![nf-core/differentialabundance markdown report result](images/module_trait_relationship.png)
 **note**
 `module_trait_relationship.png`

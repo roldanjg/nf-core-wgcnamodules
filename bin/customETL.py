@@ -41,12 +41,10 @@ def genes_extraction(genes, fdr,log2fold):
                         ) > log2fold and float(gene_fdr) < fdr
                 ):
                     genes_list.add(gene_id)
-    
+
     with open("diff_selected_genes.txt", "w") as genes_to_save:
         for gene in genes_list:
             genes_to_save.write(f"{gene}\n")
-                    
-                    
 
 def load_data(input_wgcna,contrast_wgcna,tpms_wgcna,genes):
     metadata_dict = {'samples':{},'comparations':{}, 'genes':[]}
@@ -99,14 +97,16 @@ def main(args=None):
     if 'tsv+c+' in args.genes:
         genes_extraction(args.genes, args.log2ratio, args.fdr)
         args.genes = 'diff_selected_genes.txt'
-    
+
     # extract
-    metadata, tpmsdf = load_data(args.input_wgcna,args.contrast_wgcna,args.tpms_wgcna,args.genes)
+    metadata, tpmsdf = load_data(
+        args.input_wgcna,args.contrast_wgcna,args.tpms_wgcna,args.genes
+        )
     # transform
 
     if args.genes.endswith('.txt'):
         tpmsdf = select_specific_genes(metadata, tpmsdf)
-    
+
     tpmsdf = calculate_mean(metadata, tpmsdf)
     if args.norm == 'ratio':
         tpmsdf = calculate_ratio(metadata, tpmsdf)

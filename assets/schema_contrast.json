@@ -7,7 +7,7 @@
     "items": {
         "type": "object",
         "properties": {
-            "contrast":{
+            "contrast": {
                 "type": "string",
                 "pattern": "^\\S+$",
                 "errorMessage": "The identifier that caracterice the contrast. It must be provided and cannot contain spaces."
@@ -28,6 +28,6 @@
                 "errorMessage": "The identifier for the condition where differentially expressed genes are to be measured. It must be provided and cannot contain spaces."
             }
         },
-        "required": ["contrast","variable", "reference", "target"]
+        "required": ["contrast", "variable", "reference", "target"]
     }
 }

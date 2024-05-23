@@ -60,7 +60,7 @@ workflow DIFFERENTIALABUNDANCE {
             [ meta, file(matrix_as_anno_filename) ]
         }
     ch_matrices_for_validation = ch_in_raw
-    
+
     VALIDATOR(
         ch_input.join(ch_matrices_for_validation),
         ch_features,
@@ -85,7 +85,7 @@ workflow DIFFERENTIALABUNDANCE {
     ch_samples_and_matrix = VALIDATOR.out.sample_meta
         .join(CUSTOM_MATRIXFILTER.out.filtered)     // -> meta, samplesheet, filtered matrix
         .first()
-    
+
     DESEQ2_NORM (
             ch_contrasts.first(),
             ch_samples_and_matrix,
@@ -154,7 +154,7 @@ workflow DIFFERENTIALABUNDANCE {
         ch_differential,
         ch_all_matrices
     )
-    
+
     // Gather software versions
 
     ch_versions = ch_versions

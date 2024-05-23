@@ -11,6 +11,7 @@
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](https://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
+
 <!-- [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/nf-core/wgcnamodules)
@@ -19,7 +20,7 @@
 
 ## Introduction
 
-**nf-core-wgcnamodules** is a bioinformatics pipeline complementary to [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) and [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/) that can be used to infer relevant TF regulators in 60 different plant species from RNA-seq data. It takes a samplesheet and the salmon folder from a RNA-seq quantification analisys with  [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq), performs a diferential expression analisys, WGCNA, and generates clusters of co-expressed genes to search for enriched TFBS using [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/).
+**nf-core-wgcnamodules** is a bioinformatics pipeline complementary to [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) and [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/) that can be used to infer relevant TF regulators in 60 different plant species from RNA-seq data. It takes a samplesheet and the salmon folder from a RNA-seq quantification analisys with [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq), performs a diferential expression analisys, WGCNA, and generates clusters of co-expressed genes to search for enriched TFBS using [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/).
 
 <p align="center">
   <img src="docs/images/infograph.png">
@@ -29,6 +30,7 @@
 2. Differential Expression Genes filter ([`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)).
 3. WGCNA ([`WGCNA`](https://cran.r-project.org/web/packages/WGCNA/index.html)).
 4. TDTHub ([`TDTHub`](http://acrab.cnb.csic.es/TDTHub/)).
+
 ## Usage
 
 <!-- >TODO  **NOTE**
@@ -38,8 +40,7 @@
 > Example files to get familiar with and test the pipeline are available at [wgcnamodules_testdata](https://github.com/roldanjg/wgcnamodules_testdata). We recommend to test pipeline using these files when you run it for the first time.
 
 > **NOTE**
-> Parameters configuration and extensive details are available in the [documentation](docs/README.md) and in the [the book chapter](https://nf-co.re/docs/usage/installation) associated to this pipeline 
-
+> Parameters configuration and extensive details are available in the [documentation](docs/README.md) and in the [the book chapter](https://nf-co.re/docs/usage/installation) associated to this pipeline
 
 First, run ([`nf-core/rnaseq`](https://github.com/nf-core/rnaseq)) and prepare a samplesheet with your input data that looks as follows:
 
@@ -55,10 +56,11 @@ TREATMENT2_REP1,TREATMENT2,1
 TREATMENT2_REP2,TREATMENT2,2
 ```
 
-Where the columns correspond to: 
-1.	‘sample’: same name as the 'samplesheet_rnaseq.csv' sample column. 
-2.	‘condition’: name of the treatment, genotype or group that defines an experimental condition with one or multiple replicates. 
-3.	‘replicate’: number of the biological replicate.
+Where the columns correspond to:
+
+1. ‘sample’: same name as the 'samplesheet_rnaseq.csv' sample column.
+2. ‘condition’: name of the treatment, genotype or group that defines an experimental condition with one or multiple replicates.
+3. ‘replicate’: number of the biological replicate.
 
 Prepare a metadata file with the following format:
 
@@ -67,14 +69,15 @@ Prepare a metadata file with the following format:
 ```csv
 contrast,variable,control,target
 TREATMENT1_vs_CONTROL1,condition,CONTROL1,TREATMENT1
-TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2 
+TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2
 ```
-Where the columns correspond to: 
-1.	‘contrast’: a custom name used to identify the contrast.
-2.	‘variable':  the name of the column from 'samplesheet_wgcna.csv' file that contains the condition ids. 
-3.	'control': the base/reference level for the contrast. 
-4.	'target': the target/ non-reference level for the comparison. 
 
+Where the columns correspond to:
+
+1. ‘contrast’: a custom name used to identify the contrast.
+2. ‘variable': the name of the column from 'samplesheet_wgcna.csv' file that contains the condition ids.
+3. 'control': the base/reference level for the contrast.
+4. 'target': the target/ non-reference level for the comparison.
 
 <!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
      Explain what rows and columns represent. For instance (please edit as appropriate):
@@ -93,10 +96,11 @@ Each row represents a fastq file (single-end) or a pair of fastq files (paired e
 -->
 
 Now, you can run the pipeline using:
+
 ```bash
 nextflow run nf-core-wgcnamodules \
     -profile conda \
-    --input samplesheet_wgcna.csv \ 
+    --input samplesheet_wgcna.csv \
     --contrast contrasts_wgcna.csv \
     --salmon_dir <PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon \
     --diff_exp_genes true \
@@ -112,7 +116,7 @@ and the [output documentation](docs/output.md).
 
 ## Credits
 
-nf-core-wgcnamodules was originally written by roldanjg. 
+nf-core-wgcnamodules was originally written by roldanjg.
 
 ## Citations
 
@@ -127,8 +131,7 @@ If you use nf-core/wgcnamodules for your analysis, please cite it using the foll
 >
 > Grau J. & Franco-Zorrilla JM.
 >
->XXXXX 2024 X X. doi: [XXXX](XXXXXX).
-
+> XXXXX 2024 X X. doi: [XXXX](XXXXXX).
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 You can cite the `nf-core` publication as follows:
@@ -139,10 +142,10 @@ You can cite the `nf-core` publication as follows:
 >
 > _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
 
-
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
+
 > _**NOTE** This pipeline was created to run complementary to [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) and is not an official release from the nf-core team, but is intended to subscribe to the standards, practices and procedures established by nf-core community._
 
 <!-- For further information or help, don't hesitate to get in touch on the [Slack `#wgcnamodules` channel](https://nfcore.slack.com/channels/wgcnamodules) (you can join with [this invite](https://nf-co.re/join/slack)). -->

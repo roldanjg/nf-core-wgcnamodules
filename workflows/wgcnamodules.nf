@@ -19,7 +19,7 @@ workflow WGCNAMODULES {
     main:
 
     if (params.genes && params.diff_exp_genes == true) {
-        exit 1, 'Introuducing a list of genes in --genes is not compatible with setting --diff_exp_genes true.' 
+        exit 1, 'Introuducing a list of genes in --genes is not compatible with setting --diff_exp_genes true.'
     }
 
     ch_versions = Channel.empty()
@@ -38,11 +38,11 @@ workflow WGCNAMODULES {
     if (params.genes) {
         genes = file(params.genes, checkIfExists: true)
         } else if ( params.diff_exp_genes == true) {
-             genes = DIFFERENTIALABUNDANCE.out.tables.collect{it[1]}.map{it.join("+c+")}
-             } else (
+            genes = DIFFERENTIALABUNDANCE.out.tables.collect{it[1]}.map{it.join("+c+")}
+            } else (
                 genes = "all"
-             )
-             
+            )
+
     tpms_wgcna = file(params.salmon_dir+"/salmon.merged.gene_tpm.tsv", checkIfExists: true)
 
     CUSTOM_FILES_TRANSFORMATION(

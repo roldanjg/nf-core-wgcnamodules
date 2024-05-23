@@ -4,7 +4,7 @@ process WGCNA {
     // (Bio)conda packages have intentionally not been pinned to a specific version
     // This was to avoid the pipeline failing due to package conflicts whilst creating the environment when using -profile conda
     conda "conda-forge::r-base bioconda::r-wgcna bioconda::bioconductor-complexheatmap conda-forge::r-optparse conda-forge::r-ggplot2 conda-forge::r-rcolorbrewer conda-forge::r-pheatmap"
-    
+
     input:
     path wgcnai
 

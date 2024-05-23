@@ -2,12 +2,13 @@
 
 ## Introduction
 
-The computational pipeline detailed in this documentation one of the steps in a 3 steps workflow to  to infer TF regulators applicable to 60 plant species from RNA sequencing (RNA-seq) data as the starting point.It consists of 3 main parts. The first part, is RNA-Seq quantification, using [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) pipeline. The second part, nf-core-wgcnamodules, is executed from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) results and consists of an optional idetification of differentially expressed genes between pairs of contrasts, and the use of gene expression levels to perform a clustering analysis using Weighted Correlation Network Analysis (WGCNA). In the last step, genes corresponding to each cluster are used for the identification of enriched TF binding sites that could help to determine the most relevant transcriptional regulators involved in the biological process under study using the webpage [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/). This documentation detail the use of nf-core-wgcnamodules.
+The computational pipeline detailed in this documentation one of the steps in a 3 steps workflow to to infer TF regulators applicable to 60 plant species from RNA sequencing (RNA-seq) data as the starting point.It consists of 3 main parts. The first part, is RNA-Seq quantification, using [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) pipeline. The second part, nf-core-wgcnamodules, is executed from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) results and consists of an optional idetification of differentially expressed genes between pairs of contrasts, and the use of gene expression levels to perform a clustering analysis using Weighted Correlation Network Analysis (WGCNA). In the last step, genes corresponding to each cluster are used for the identification of enriched TF binding sites that could help to determine the most relevant transcriptional regulators involved in the biological process under study using the webpage [`TDTHub`](http://acrab.cnb.csic.es/TDTHub/). This documentation detail the use of nf-core-wgcnamodules.
+
 <!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
 
 ## Samplesheet inputs
 
-You will need to create two samplesheets with information about the samples you would like to analyse before running the pipeline, and the contrasts you would like to study between those samples. Both have to be a comma-separated file with the number of columns  and a header row as shown in the examples below.
+You will need to create two samplesheets with information about the samples you would like to analyse before running the pipeline, and the contrasts you would like to study between those samples. Both have to be a comma-separated file with the number of columns and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]' --contrast '[path to samplesheet file]'
@@ -16,7 +17,6 @@ You will need to create two samplesheets with information about the samples you 
 ### Input samplesheet
 
 You can adapt the shamplesheet input file from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) as the pipelines are intended to run in a complementary way. It is important that the `sample` field matches the header in the Salmon folder files that are generated from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq).
-
 
 ```csv title="samplesheet.csv"
 sample,condition,replicate
@@ -28,11 +28,11 @@ TREATMENT2_REP1,TREATMENT2,1
 TREATMENT2_REP2,TREATMENT2,2
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. Same name as the 'samplesheet_rnaseq.csv' sample name from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq). |
-| `condition` | Name of the treatment, genotype or group that defines an experimental condition with one or multiple replicates.                                                             |
-| `replicate` |Number of the biological replicate. |
+| Column      | Description                                                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample`    | Custom sample name. Same name as the 'samplesheet_rnaseq.csv' sample name from [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq). |
+| `condition` | Name of the treatment, genotype or group that defines an experimental condition with one or multiple replicates.                      |
+| `replicate` | Number of the biological replicate.                                                                                                   |
 
 An [example input samplesheet](../assets/samplesheet_wgcna.csv) has been provided with the pipeline.
 
@@ -43,14 +43,15 @@ The contrasts file references the observations file to define groups of samples 
 ```csv title="contrast_wgcna.csv"
 contrast,variable,control,target
 TREATMENT1_vs_CONTROL1,condition,CONTROL1,TREATMENT1
-TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2 
+TREATMENT2_vs_CONTROL1,condition,CONTROL1,TREATMENT2
 ```
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `contrast`  | A custom name used to identify the contrast. |
+
+| Column     | Description                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------- |
+| `contrast` | A custom name used to identify the contrast.                                              |
 | `variable` | The name of the column from 'samplesheet_wgcna.csv' file that contains the condition ids. |
-| `control` | The base/reference level for the contrast.  |
-| `target` | The target/ non-reference level for the comparison.  
+| `control`  | The base/reference level for the contrast.                                                |
+| `target`   | The target/ non-reference level for the comparison.                                       |
 
 An [example contrast samplesheet](../assets/contrasts_wgcna.csv) has been provided with the pipeline.
 
@@ -61,7 +62,7 @@ The typical command for running the pipeline is as follows:
 ```bash
 nextflow run nf-core-wgcnamodules \
     -profile conda \
-    --input samplesheet_wgcna.csv \ 
+    --input samplesheet_wgcna.csv \
     --contrast contrasts_wgcna.csv \
     --salmon_dir <PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon \
     --diff_exp_genes true \
@@ -71,8 +72,6 @@ nextflow run nf-core-wgcnamodules \
 This will launch the pipeline with the `conda` configuration profile. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
-
-
 
 ```bash
 work                # Directory containing the nextflow working files
@@ -100,7 +99,7 @@ with `params.yaml` containing:
 ```yaml
 input: './samplesheet_wgcna.csv'
 contrast: './contrasts_wgcna.csv'
-salmon_dir: '<PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon' 
+salmon_dir: '<PATH_TO_NF-CORE/RNASEQ_SALMON_FOLDER>/salmon'
 diff_exp_genes: true
 outdir: <OUTDIR>
 <...>
@@ -109,7 +108,9 @@ outdir: <OUTDIR>
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
 ## Main arguments
+
 ### `--salmon_dir`
+
 Use this to specify the path tho the location of your [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) folder with Salmon output, including raw quantified reads and TPM- (tags per million)-normalized expression matrix:
 
 ```bash
@@ -121,9 +122,8 @@ Please note the following requirements:
 1. The format of the files inside the folder should be the same as the format obtained by running salmon with [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq) pipeline.
 2. The folder should contain at leats these three files inside: `salmon.merged.gene_counts.tsv`, `salmon.merged.gene_lengths.tsv`, `salmon.merged.gene_tpm.tsv`.
 
-
-
 ### `--diff_exp_genes [true/false]`
+
 Whether to perform differential expression analysis `true` or not `false` to select only DE genes for clustering. :
 
 ```bash
@@ -133,6 +133,7 @@ Whether to perform differential expression analysis `true` or not `false` to sel
 It is not compatible with the option `--genes`.
 
 ### `--fdr [number] --log2fold [number]`
+
 If `--diff_exp_genes true`, you can also select the Log2Fold and FDR threshold to extract DE genes for clustering. Default values are:
 
 ```bash
@@ -140,11 +141,13 @@ If `--diff_exp_genes true`, you can also select the Log2Fold and FDR threshold t
 ```
 
 ### `--genes *.txt`
+
 If `--diff_exp_genes false`, you can introduce your custom list of genes to perform WGCNA clustering.:
 
 ```bash
 --genes <FILE>.txt
 ```
+
 Please note the following requirements:
 
 1. It is important to introduce a minimum of 50 genes to have at least 2 clusters. The process may fail because there are too few genes to group together.
@@ -171,7 +174,6 @@ We recommend adding the following line to your environment to limit this (typica
 ```bash
 NXF_OPTS='-Xms1g -Xmx4g'
 ```
-
 
 <!-- ### Updating the pipeline
 
@@ -218,7 +220,7 @@ They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
 If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer enviroment.
 
-At this time the pipeline only supports one profile: 
+At this time the pipeline only supports one profile:
 
 <!--TODO GENERATE TEST PROFILE - `test`
   - A profile with a complete configuration for automated testing
@@ -264,5 +266,3 @@ In most cases, you will only need to create a custom config as a one-off but if 
 See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own configuration files.
 
 If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the [`#configs` channel](https://nfcore.slack.com/channels/configs).
-
-
